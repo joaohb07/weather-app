@@ -53,6 +53,7 @@ I used the following npm libs to develop this app:
 
 1. [Express](https://expressjs.com/) - For creating a web server.
 2. [Hbs](https://www.npmjs.com/package/hbs) - Handlebars for custom dinamic HTML views.
+3. [Postman Request](https://www.npmjs.com/package/postman-request) - To make a request to the APIs.
 
 ## Contributing
 
