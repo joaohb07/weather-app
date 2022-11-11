@@ -1,5 +1,7 @@
 # Weather App
 
+[![Deploy on Heroku](https://github.com/joaohb07/weather-app/actions/workflows/heroku-deploy.yml/badge.svg)](https://github.com/joaohb07/weather-app/actions/workflows/heroku-deploy.yml)
+
 > Check out weather information about a specific location!
 
 A weather app using [**Node.js**](https://nodejs.org/en/). To run this locally, make sure you have this installed.
