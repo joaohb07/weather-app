@@ -33,7 +33,7 @@ To run the app, execute the following command:
 nodemon src/index.js -e js,hbs
 ```
 
-Access in your favorite web browser: `localhost:3000`
+Access in your favorite web browser `localhost:3000`.
 
 ## Technologies
 
