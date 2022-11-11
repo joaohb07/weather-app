@@ -1,6 +1,9 @@
 # Weather App
 
-[![Deploy on Heroku](https://github.com/joaohb07/weather-app/actions/workflows/heroku-deploy.yml/badge.svg)](https://github.com/joaohb07/weather-app/actions/workflows/heroku-deploy.yml)
+<center>
+    [![Deploy on Heroku](https://github.com/joaohb07/weather-app/actions/workflows/heroku-deploy.yml/badge.svg)](https://github.com/joaohb07/weather-app/actions/workflows/heroku-deploy.yml)
+    ![Heroku](https://pyheroku-badge.herokuapp.com/?app=botelho-web-weather-app)
+</center>
 
 > Check out weather information about a specific location!
 
@@ -32,7 +35,13 @@ To install dependencies to run this code locally, follow these steps:
 To run the app, execute the following command:
 
 ```bash
-nodemon src/index.js -e js,hbs
+npm run start
+```
+
+To run the app with [nodemon](https://www.npmjs.com/package/nodemon) for local development, execute the following command:
+
+```bash
+npm run dev
 ```
 
 Access in your favorite web browser `localhost:3000`.
