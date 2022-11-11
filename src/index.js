@@ -19,6 +19,8 @@ const partialsPath = path.join(__dirname, '../templates/partials') // Define `pa
 
 // Initialize app
 const app = express()
+// Initialize app port
+const port = process.env.PORT || 3000
 
 // Set up express view engine 
 // Using handlebars.js(hbs npmjs lib - integration w/ express)
@@ -115,6 +117,6 @@ app.get('*', (req,res) => { // `*` - express wildcard
     })
 })
 
-app.listen(3000, () => {
-    console.log('Server is up on port 3000.')
+app.listen(port, () => {
+    console.log('Server is up on port ' + port)
 })
