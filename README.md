@@ -8,6 +8,10 @@
 
 A weather app using [**Node.js**](https://nodejs.org/en/). To run this locally, make sure you have this installed.
 
+## Live Preview
+
+Check out the [***app***](https://botelho-web-weather-app.herokuapp.com/) deployed by heroku.
+
 ## Documentation
 
 Access my official projects [**documentation**](https://joaohb07.github.io/documentation/).
