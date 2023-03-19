@@ -1,4 +1,13 @@
-# Weather App
+<p align="center">
+    <img src="public/img/icon.png" height="75">
+    <h1 align="center"><b>Weather App</b></h1>
+</p>
+
+<p align="center">
+  <a href="https://weather-app-ix73.onrender.com">
+    <img alt="Heroku" src="https://badgen.net/badge/icon/Live Preview?icon=terminal&label=Render&color=blue" />
+  </a>
+</p>
 
 > Check out weather information about a specific location!
 
