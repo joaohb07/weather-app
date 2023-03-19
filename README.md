@@ -1,16 +1,12 @@
 # Weather App
 
-[![Deploy on Heroku](https://github.com/joaohb07/weather-app/actions/workflows/heroku-deploy.yml/badge.svg)](https://github.com/joaohb07/weather-app/actions/workflows/heroku-deploy.yml)
-
-![Heroku](https://pyheroku-badge.herokuapp.com/?app=botelho-web-weather-app&style=plastic)
-
 > Check out weather information about a specific location!
 
 A weather app using [**Node.js**](https://nodejs.org/en/). To run this locally, make sure you have this installed.
 
 ## Live Preview
 
-Check out the [***app***](https://botelho-web-weather-app.herokuapp.com/) deployed by heroku.
+Check out the [***app***](https://weather-app-ix73.onrender.com) deployed on render.
 
 ## Documentation
 
