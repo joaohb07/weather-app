@@ -17,10 +17,14 @@ const geocode = async (address) => {
         throw new Error('Unable to find location. Try another search!')
     }
 
+    const result = data.results[0]
+
     return {
-        placeName: data.results[0].formatted,
-        latitude: data.results[0].geometry.lat,
-        longitude: data.results[0].geometry.lng
+        placeName: result.formatted,
+        latitude: result.geometry.lat,
+        longitude: result.geometry.lng,
+        countryCode: result.components?.county_code || null,
+        countryName: result.components?.country || null
     }
 }
 

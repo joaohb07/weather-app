@@ -1,35 +1,12 @@
 const path = require('path')
 const express = require('express')
-const hbs = require('hbs')
 const geocode = require('./utils/geocode')
 const forecast = require('./utils/forecast')
 
 const app = express()
 const port = process.env.PORT || 3000
 
-const publicDir = path.join(__dirname, '../public')
-const viewsPath = path.join(__dirname, '../templates/views')
-const partialsPath = path.join(__dirname, '../templates/partials')
-
-app.set('view engine', 'hbs')
-app.set('views', viewsPath)
-hbs.registerPartials(partialsPath)
-
-app.use(express.static(publicDir))
-
-app.get('', (req, res) => {
-    res.render('index', {
-        title: 'Weather App',
-        name: 'joaohb07'
-    })
-})
-
-app.get('/about', (req, res) => {
-    res.render('about', {
-        title: 'About App',
-        name: 'joaohb07'
-    })
-})
+const clientDistPath = path.join(__dirname, '../client/dist')
 
 app.get('/weather', async (req, res) => {
     const address = req.query.address?.trim()
@@ -41,11 +18,11 @@ app.get('/weather', async (req, res) => {
     }
 
     try {
-        const { latitude, longitude, placeName } = await geocode(address)
-        const forecastData = await forecast(latitude, longitude)
+        const locationData = await geocode(address)
+        const forecastData = await forecast(locationData.latitude, locationData.longitude)
 
         return res.send({
-            placeName,
+            ...locationData,
             forecastData
         })
     } catch (error) {
@@ -55,12 +32,11 @@ app.get('/weather', async (req, res) => {
     }
 })
 
+// Serve o frontend React compilado em produção
+app.use(express.static(clientDistPath))
+
 app.get('*', (req, res) => {
-    res.render('404', {
-        title: '404',
-        message: 'Page not found!',
-        name: 'joaohb07'
-    })
+    res.sendFile(path.join(clientDistPath, 'index.html'))
 })
 
 app.listen(port, () => {
