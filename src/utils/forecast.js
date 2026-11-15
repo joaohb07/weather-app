@@ -1,47 +1,25 @@
-const request = require('postman-request')
+const forecast = async (latitude, longitude) => {
+    const apiKey = process.env.OPENWEATHER_API_KEY
+    if (!apiKey) {
+        throw new Error('OPENWEATHER_API_KEY is not configured on the server.')
+    }
 
-// // OpenWeather API url
-// const url_weather = 'http://api.weatherstack.com/current?access_key=d88b3ad371151906f715613a31e2e292&query=37.0000,-122.0000'
-// // WeatherStack API options
-// const options = {
-//     url: url_weather,
-//     json: true // With json option set as true, there is no need to parse stuff with JSON.parse()
-// }
-// request(options, (error, response) => {
-//     // const data = JSON.parse(response.body) // body is where the API response stores values
-//     // console.log(data.current) // current stores the info about temperature
-//     // console.log("%s. The current temperature is %s, It feels like %s",response.body.current.weather_descriptions[0], response.body.current.temperature, response.body.current.feelslike)
-//     //console.log(response.body.current)
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`
 
-//     if (error) {
-//         console.log("Unable to fetch data from WeatherStack: %s", error)
-//     } else if(response.body.error){
-//         console.log("Unable to fetch data:\n%s\n%s", response.body.error.type, response.body.error.info)
-//     } else {
-//         console.log(response.body.current)
-//     }
-// })
+    const response = await fetch(url, { signal: AbortSignal.timeout(5000) })
+    const data = await response.json()
 
-const forecast = (latitude, longitude, callback) => {
-    const url = 'https://api.openweathermap.org/data/2.5/weather?lat='+ latitude +'&lon=' + longitude + '&units=metric&appid=79e58c9ab2a5edbf0e3bd6708a364732'
+    if (!response.ok) {
+        throw new Error(data?.message || 'Unable to connect to OpenWeather API!')
+    }
 
-
-    request({ url, json: true }, (error, { body }) => {
-        if (error){
-            callback('Unable to connect to OpenWeather API!', undefined)
-        } else if (body.message){
-            callback(body.message, undefined)
-        } else {
-            const data = {
-                weather_description: body.weather[0].description,
-                temperature: body.main.temp,
-                feels_like: body.main.feels_like,
-                humidity: body.main.humidity,
-                icon: body.weather[0].icon
-            }
-            callback(undefined, data)
-        }
-    })
+    return {
+        weather_description: data.weather[0].description,
+        temperature: data.main.temp,
+        feels_like: data.main.feels_like,
+        humidity: data.main.humidity,
+        icon: data.weather[0].icon
+    }
 }
 
 module.exports = forecast

@@ -50,7 +50,7 @@ weatherForm.addEventListener('submit', (event) => {
             messageTempHum.textContent = 'Humidity: ' + data.forecastData.humidity + '%'
             messageIconDiv.style.display = 'inline'
             messageList.style.display = 'inline'
-            const iconUrl = 'http://openweathermap.org/img/w/' + data.forecastData.icon + '.png'
+            const iconUrl = `https://openweathermap.org/img/wn/${data.forecastData.icon}@2x.png`
             messageIcon.src = iconUrl
         }
     })
