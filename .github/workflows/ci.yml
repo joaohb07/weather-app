@@ -62,5 +62,5 @@ jobs:
         with:
           working-directory: client
           install: false
-          start: npm run dev
-          wait-on: 'http://localhost:5173'
+          start: npm run dev -- --host 127.0.0.1
+          wait-on: 'http://127.0.0.1:5173'
