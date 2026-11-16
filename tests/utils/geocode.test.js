@@ -1,5 +1,10 @@
 const geocode = require('../../src/utils/geocode')
 
+/**
+ * Unit test suite for the `geocode` utility.
+ * Covers API key validation, URL encoding, ISO country extraction, empty results,
+ * and network/API failure propagation.
+ */
 describe('geocode utility', () => {
     const originalEnv = process.env
 
@@ -41,8 +46,9 @@ describe('geocode utility', () => {
 
         const result = await geocode('Porto, Portugal')
 
+        // Verify URL encoding of special characters and timeout signal attachment
         expect(fetchSpy).toHaveBeenCalledWith(
-            'https://api.opencagedata.com/geocode/v1/json?key=test-opencage-key&q=Porto%2C%20Portugal&limit=1',
+            'https://api.opencagedata.com/geocode/v1/json?key=test-opencage-key&q=Porto%2C%20Portugal&language=en&limit=5',
             { signal: expect.any(AbortSignal) }
         )
         expect(result).toEqual({
@@ -55,6 +61,7 @@ describe('geocode utility', () => {
     })
 
     it('should fallback countryCode and countryName to null when components are absent', async () => {
+        // Simulates offshore/international coordinates where country metadata does not exist
         jest.spyOn(global, 'fetch').mockResolvedValue({
             ok: true,
             json: async () => ({

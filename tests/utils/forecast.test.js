@@ -1,6 +1,12 @@
 const forecast = require('../../src/utils/forecast')
 
+/**
+ * Unit test suite for the `forecast` utility.
+ * Stubs `global.fetch` and isolates `process.env` to verify URL construction,
+ * payload normalization, and upstream error handling without external network calls.
+ */
 describe('forecast utility', () => {
+    // Snapshot original environment variables so mutations don't leak across test suites
     const originalEnv = process.env
 
     beforeEach(() => {
@@ -30,6 +36,7 @@ describe('forecast utility', () => {
             }
         }
 
+        // Spy on native `fetch` and resolve with a simulated HTTP 200 payload
         const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue({
             ok: true,
             json: async () => mockWeatherResponse
@@ -37,10 +44,13 @@ describe('forecast utility', () => {
 
         const result = await forecast(41.15, -8.61)
 
+        // Verify query parameters (metric units, default 'en' lang, API key) and AbortSignal timeout
         expect(fetchSpy).toHaveBeenCalledWith(
             'https://api.openweathermap.org/data/2.5/weather?lat=41.15&lon=-8.61&units=metric&lang=en&appid=test-openweather-key',
             { signal: expect.any(AbortSignal) }
         )
+
+        // Verify output matches the normalized `ForecastResult` schema
         expect(result).toEqual({
             weather_description: 'broken clouds',
             temperature: 17.2,
