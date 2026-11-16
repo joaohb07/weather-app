@@ -52,7 +52,7 @@ describe('GET /weather endpoint', () => {
 
         expect(res.status).toBe(200)
         expect(geocode).toHaveBeenCalledWith('Barcelona')
-        expect(forecast).toHaveBeenCalledWith(41.3874, 2.1686)
+        expect(forecast).toHaveBeenCalledWith(41.3874, 2.1686, 'en')
         expect(res.body).toEqual({
             ...mockLocation,
             forecastData: mockForecast

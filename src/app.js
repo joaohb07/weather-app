@@ -8,11 +8,12 @@ const app = express()
 const clientDistPath = path.join(__dirname, '../client/dist')
 
 /**
- * Rota de consulta meteorológica.
- * Recebe `address` via query string, resolve coordenadas e retorna o clima atual.
+ * Weather lookup endpoint.
+ * Accepts `address` and optional `lang` ("en" | "pt") via query string.
  */
 app.get('/weather', async (req, res) => {
     const address = req.query.address?.trim()
+    const lang = req.query.lang === 'pt' ? 'pt' : 'en'
 
     if (!address) {
         return res.status(400).send({
@@ -22,7 +23,7 @@ app.get('/weather', async (req, res) => {
 
     try {
         const locationData = await geocode(address)
-        const forecastData = await forecast(locationData.latitude, locationData.longitude)
+        const forecastData = await forecast(locationData.latitude, locationData.longitude, lang)
 
         return res.send({
             ...locationData,
@@ -35,7 +36,7 @@ app.get('/weather', async (req, res) => {
     }
 })
 
-// Entrega o build estático do frontend React quando disponível
+// Serve compiled React frontend in production
 if (fs.existsSync(clientDistPath)) {
     app.use(express.static(clientDistPath))
 

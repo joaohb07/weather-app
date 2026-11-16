@@ -1,18 +1,18 @@
 /**
  * @typedef {Object} GeocodeResult
- * @property {string} placeName - Endereço completo formatado.
- * @property {number} latitude - Latitude geográfica.
- * @property {number} longitude - Longitude geográfica.
- * @property {string|null} countryCode - Código do país (ex: "PRT").
- * @property {string|null} countryName - Nome do país retornado pela API.
+ * @property {string} placeName - Formatted full address.
+ * @property {number} latitude - Geographic latitude.
+ * @property {number} longitude - Geographic longitude.
+ * @property {string|null} countryCode - ISO 3166-1 alpha-3 country code (e.g., "PRT").
+ * @property {string|null} countryName - Country name returned by the API.
  */
 
 /**
- * Converte um endereço ou nome de cidade em coordenadas geográficas via OpenCage API.
+ * Converts an address or city name into geographic coordinates via OpenCage API.
  *
- * @param {string} address - Localização pesquisada pelo usuário.
- * @returns {Promise<GeocodeResult>} Dados geográficos normalizados.
- * @throws {Error} Quando a chave de API está ausente, a API falha ou nenhum local é encontrado.
+ * @param {string} address - Location query provided by the user.
+ * @returns {Promise<GeocodeResult>} Normalized geographic data.
+ * @throws {Error} When the API key is missing, the request fails, or no location is found.
  */
 const geocode = async (address) => {
     const apiKey = process.env.OPENCAGE_API_KEY

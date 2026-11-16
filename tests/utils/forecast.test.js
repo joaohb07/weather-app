@@ -38,7 +38,7 @@ describe('forecast utility', () => {
         const result = await forecast(41.15, -8.61)
 
         expect(fetchSpy).toHaveBeenCalledWith(
-            'https://api.openweathermap.org/data/2.5/weather?lat=41.15&lon=-8.61&units=metric&appid=test-openweather-key',
+            'https://api.openweathermap.org/data/2.5/weather?lat=41.15&lon=-8.61&units=metric&lang=en&appid=test-openweather-key',
             { signal: expect.any(AbortSignal) }
         )
         expect(result).toEqual({
