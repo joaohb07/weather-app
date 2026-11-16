@@ -42,13 +42,13 @@ jobs:
           cache: 'npm'
           cache-dependency-path: client/package-lock.json
 
-      - name: Install frontend dependencies
-        working-directory: ./client
-        run: npm ci
+      - name: Install root & frontend dependencies
+        run: |
+          npm ci
+          npm --prefix client ci
 
-      - name: Verify production build (Vite)
-        working-directory: ./client
-        run: npm run build
+      - name: Build frontend bundle (Vite)
+        run: npm --prefix client run build
 
       - name: Run Cypress Component Tests
         uses: cypress-io/github-action@v6
@@ -62,5 +62,7 @@ jobs:
         with:
           working-directory: client
           install: false
-          start: npx vite preview --host 127.0.0.1 --port 5173
-          wait-on: 'http-get://127.0.0.1:5173'
+          start: npm start --prefix ..
+          wait-on: 'http://127.0.0.1:3000'
+        env:
+          CYPRESS_baseUrl: 'http://127.0.0.1:3000'
