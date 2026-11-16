@@ -6,7 +6,7 @@ import { defineConfig } from 'cypress'
 export default defineConfig({
   e2e: {
     // Target the local Vite development server for E2E test runs
-    baseUrl: 'http://localhost:5173',
+    baseUrl: 'http://127.0.0.1:5173',
     // Disable default boilerplate support file since custom commands are not required
     supportFile: false,
     // Standard desktop viewport dimensions ensuring map and floating UI overlays render cleanly
