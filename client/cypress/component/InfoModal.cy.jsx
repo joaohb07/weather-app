@@ -1,35 +1,40 @@
 import { mount } from 'cypress/react'
 import '../../src/index.css'
+import i18n from '../../src/i18n'
 import InfoModal from '../../src/components/InfoModal'
 
 describe('<InfoModal />', () => {
-  it('inicia fechado e abre ao clicar no botão de informação', () => {
+  beforeEach(() => {
+    i18n.changeLanguage('en')
+  })
+
+  it('starts closed and opens when clicking the info button', () => {
     mount(<InfoModal />)
 
-    cy.contains('Repositório no GitHub').should('not.exist')
+    cy.contains('GitHub Repository').should('not.exist')
 
-    cy.get('button[aria-label="Sobre o projeto"]').click()
+    cy.get('button[aria-label="About the project"]').click()
 
     cy.contains('h3', 'Weather App').should('be.visible')
-    cy.contains('a', 'Repositório no GitHub').should(
+    cy.contains('a', 'GitHub Repository').should(
       'have.attr',
       'href',
       'https://github.com/joaohb07/weather-app'
     )
-    cy.contains('a', 'Documentação').should(
+    cy.contains('a', 'Documentation').should(
       'have.attr',
       'href',
       'https://joaohb07.github.io/documentation/'
     )
   })
 
-  it('fecha o modal ao clicar fora (overlay)', () => {
+  it('closes modal when clicking outside overlay', () => {
     mount(<InfoModal />)
 
-    cy.get('button[aria-label="Sobre o projeto"]').click()
-    cy.contains('Repositório no GitHub').should('be.visible')
+    cy.get('button[aria-label="About the project"]').click()
+    cy.contains('GitHub Repository').should('be.visible')
 
     cy.get('.fixed.inset-0.z-30').click('topLeft')
-    cy.contains('Repositório no GitHub').should('not.exist')
+    cy.contains('GitHub Repository').should('not.exist')
   })
 })

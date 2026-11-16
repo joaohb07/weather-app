@@ -3,7 +3,7 @@ import '../../src/index.css'
 import WorldMap from '../../src/components/WorldMap'
 
 describe('<WorldMap />', () => {
-  it('renderiza o mapa sem país destacado ou pin quando location é null', () => {
+  it('renders the map with no highlighted country or pin when location is null', () => {
     mount(<WorldMap location={null} temperature={undefined} />)
 
     cy.get('svg path').should('have.length.greaterThan', 100)
@@ -11,7 +11,7 @@ describe('<WorldMap />', () => {
     cy.get('[data-testid="map-pin"]').should('not.exist')
   })
 
-  it('destaca o país em azul (#0284c7) para temperaturas frias (<= 10°C) e exibe o pin', () => {
+  it('highlights country in blue (#0284c7) for cold temperatures (<= 10°C) and renders pin', () => {
     const location = {
       countryCode: 'PRT',
       latitude: 41.1496,
@@ -27,7 +27,7 @@ describe('<WorldMap />', () => {
     cy.get('[data-testid="map-pin"]').should('exist')
   })
 
-  it('destaca o país em coral (#e11d48) para temperaturas muito quentes (> 30°C)', () => {
+  it('highlights country in coral (#e11d48) for hot temperatures (> 30°C)', () => {
     const location = {
       countryCode: 'BRA',
       latitude: -23.5505,

@@ -8,10 +8,10 @@ const WIDTH = 1000
 const HEIGHT = 520
 
 /**
- * Retorna a paleta de preenchimento e borda do país conforme a temperatura em °C.
+ * Returns country fill and stroke colors based on temperature in Celsius.
  *
- * @param {number|null|undefined} temp - Temperatura atual em graus Celsius.
- * @returns {{ fill: string, stroke: string }} Cores hexadecimais para o polígono SVG.
+ * @param {number|null|undefined} temp - Current temperature in Celsius.
+ * @returns {{ fill: string, stroke: string }} Hex color values for SVG styling.
  */
 function getThermalColor(temp) {
   if (temp === undefined || temp === null) return { fill: '#38bdf8', stroke: '#7dd3fc' }
@@ -22,11 +22,11 @@ function getThermalColor(temp) {
 }
 
 /**
- * Mapa-múndi vetorial interativo que destaca o país pesquisado e aplica zoom na coordenada.
+ * Interactive vector world map that highlights the searched country and zooms into coordinates.
  *
  * @param {Object} props
- * @param {Object|null} props.location - Dados geográficos retornados pela API `/weather`.
- * @param {number|undefined} props.temperature - Temperatura atual para definir a cor térmica.
+ * @param {Object|null} props.location - Geographic payload returned by `/weather`.
+ * @param {number|undefined} props.temperature - Current temperature used for thermal color coding.
  */
 export default function WorldMap({ location, temperature }) {
   const countries = useMemo(() => {
@@ -41,6 +41,7 @@ export default function WorldMap({ location, temperature }) {
 
   const pathGenerator = useMemo(() => geoPath().projection(projection), [projection])
 
+  // Match country polygon via ISO Alpha-3 code or coordinate containment fallback
   const highlightedFeature = useMemo(() => {
     if (!location) return null
 
@@ -66,6 +67,7 @@ export default function WorldMap({ location, temperature }) {
     return null
   }, [location, countries])
 
+  // Compute pin coordinates and smooth zoom transform
   const { pinCoords, transformStyle } = useMemo(() => {
     if (!location?.longitude || !location?.latitude) {
       return {

@@ -1,9 +1,14 @@
 import { mount } from 'cypress/react'
 import '../../src/index.css'
+import i18n from '../../src/i18n'
 import WeatherCard from '../../src/components/WeatherCard'
 
 describe('<WeatherCard />', () => {
-  it('renderiza o estado inicial com o botão Buscar desabilitado', () => {
+  beforeEach(() => {
+    i18n.changeLanguage('en')
+  })
+
+  it('renders initial state with disabled Search button', () => {
     mount(
       <WeatherCard
         weather={null}
@@ -14,12 +19,12 @@ describe('<WeatherCard />', () => {
       />
     )
 
-    cy.get('input[placeholder*="Digite uma cidade"]').should('be.visible')
-    cy.contains('button', 'Buscar').should('be.disabled')
-    cy.get('button[title="Resetar mapa"]').should('not.exist')
+    cy.get('input[placeholder*="Type a city"]').should('be.visible')
+    cy.contains('button', 'Search').should('be.disabled')
+    cy.get('button[title="Reset map"]').should('not.exist')
   })
 
-  it('chama onSearch com o texto limpo (trim) ao submeter o formulário', () => {
+  it('calls onSearch with trimmed input on form submit', () => {
     const onSearchSpy = cy.spy().as('onSearchSpy')
 
     mount(
@@ -32,13 +37,13 @@ describe('<WeatherCard />', () => {
       />
     )
 
-    cy.get('input[placeholder*="Digite uma cidade"]').type('  Porto  ')
-    cy.contains('button', 'Buscar').should('not.be.disabled').click()
+    cy.get('input[placeholder*="Type a city"]').type('  Porto  ')
+    cy.contains('button', 'Search').should('not.be.disabled').click()
 
     cy.get('@onSearchSpy').should('have.been.calledOnceWith', 'Porto')
   })
 
-  it('exibe spinner e bloqueia o botão durante o carregamento', () => {
+  it('displays spinner and disables submit button while loading', () => {
     mount(
       <WeatherCard
         weather={null}
@@ -53,7 +58,7 @@ describe('<WeatherCard />', () => {
     cy.get('button[type="submit"] svg.animate-spin').should('exist')
   })
 
-  it('renderiza os dados meteorológicos e dispara onReset ao clicar em resetar', () => {
+  it('renders weather metrics and triggers onReset when reset button is clicked', () => {
     const onResetSpy = cy.spy().as('onResetSpy')
     const mockWeather = {
       placeName: 'Porto, Portugal',
@@ -84,11 +89,13 @@ describe('<WeatherCard />', () => {
     cy.contains('16.9°C').should('be.visible')
     cy.contains('82%').should('be.visible')
 
-    cy.get('button[title="Resetar mapa"]').click()
+    cy.get('button[title="Reset map"]').click()
     cy.get('@onResetSpy').should('have.been.calledOnce')
   })
 
-  it('exibe o card de alerta quando recebe uma mensagem de erro', () => {
+  it('translates UI labels and error messages when language is switched to Portuguese', () => {
+    i18n.changeLanguage('pt')
+
     mount(
       <WeatherCard
         weather={null}
@@ -99,7 +106,7 @@ describe('<WeatherCard />', () => {
       />
     )
 
-    cy.contains('Unable to find location. Try another search!').should('be.visible')
-    cy.get('button[title="Resetar mapa"]').should('be.visible')
+    cy.contains('button', 'Buscar').should('be.visible')
+    cy.contains('Não foi possível encontrar a localização. Tente outra busca!').should('be.visible')
   })
 })
