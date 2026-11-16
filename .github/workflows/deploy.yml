@@ -11,14 +11,14 @@ jobs:
   deploy:
     name: Update Code & Rebuild Docker Container
     runs-on: ubuntu-latest
-    # Só executa o deploy se os testes do CI passaram com sucesso
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Connect to Tailscale Network
         uses: tailscale/github-action@v2
         with:
-          authkey: ${{ secrets.TS_OAUTH_CLIENT_ID }}:${{ secrets.TS_OAUTH_SECRET }}
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
       - name: Deploy via SSH to Ubuntu Server
