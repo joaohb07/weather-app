@@ -1,0 +1,35 @@
+name: CD - Deploy to Home Server
+
+on:
+  workflow_run:
+    workflows: ["CI - Tests & Build"]
+    types:
+      - completed
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Update Code & Rebuild Docker Container
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Connect to Tailscale Network
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: ${{ secrets.SERVER_HOST }}
+
+      - name: Deploy via SSH to Ubuntu Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd ~/server/projects/weather-app
+            git pull origin main
+            docker compose up -d --build
+            docker image prune -f
