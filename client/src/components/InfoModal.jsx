@@ -3,14 +3,18 @@ import { useTranslation } from 'react-i18next'
 import { Info, X, BookOpen } from 'lucide-react'
 
 /**
- * Minimalist info modal displaying project overview, repository, and documentation links.
+ * Floating bottom-right trigger button and accessible modal dialog displaying
+ * project overview, GitHub source repository, and MkDocs documentation links.
  */
 export default function InfoModal() {
   const { t } = useTranslation()
+
+  // Local visibility state for the modal dialog
   const [open, setOpen] = useState(false)
 
   return (
     <>
+      {/* Fixed bottom-right trigger button */}
       <button
         onClick={() => setOpen(true)}
         aria-label={t('infoAriaLabel')}
@@ -19,15 +23,19 @@ export default function InfoModal() {
         <Info className="h-4 w-4" />
       </button>
 
+      {/* Modal Overlay & Dialog */}
       {open && (
+        // Clicking the darkened backdrop closes the modal
         <div
           onClick={() => setOpen(false)}
           className="fixed inset-0 z-30 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
         >
+          {/* `e.stopPropagation()` prevents clicks inside the modal card from bubbling up to the backdrop */}
           <div
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-sm rounded-2xl border border-white/10 bg-slate-900 p-6 text-slate-200 shadow-2xl"
           >
+            {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <h3 className="text-base font-semibold text-white">{t('modalTitle')}</h3>
               <button
@@ -38,10 +46,12 @@ export default function InfoModal() {
               </button>
             </div>
 
+            {/* Localized Project Summary */}
             <p className="mt-4 text-xs leading-relaxed text-slate-400">
               {t('modalDescription')}
             </p>
 
+            {/* External Action Links (GitHub Repo & Documentation Portal) */}
             <div className="mt-5 flex flex-col gap-2">
               <a
                 href="https://github.com/joaohb07/weather-app"
@@ -69,6 +79,7 @@ export default function InfoModal() {
               </a>
             </div>
 
+            {/* Author Attribution Footer */}
             <p className="mt-5 text-center text-[11px] text-slate-500">
               {t('developedBy')}
             </p>

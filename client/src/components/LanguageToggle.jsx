@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
 
 /**
- * Crisp inline SVG flag for the United States (English).
+ * Crisp inline SVG icon representing the United States flag (English locale).
+ * Marked `aria-hidden="true"` because adjacent text and `aria-label` describe the button.
  */
 function UsFlagIcon() {
   return (
@@ -22,15 +23,18 @@ function UsFlagIcon() {
 }
 
 /**
- * Diagonal split SVG flag combining Brazil and Portugal (Portuguese).
+ * Diagonal split SVG icon combining Brazil (top-left) and Portugal (bottom-right)
+ * using SVG `<clipPath>` polygons to represent Lusophone/Portuguese localization.
  */
 function PtBrFlagIcon() {
   return (
     <svg className="h-3.5 w-5 rounded-[2px] shadow-xs" viewBox="0 0 60 40" aria-hidden="true">
       <defs>
+        {/* Top-left triangle clip path for Brazil */}
         <clipPath id="br-half">
           <polygon points="0,0 60,0 0,40" />
         </clipPath>
+        {/* Bottom-right triangle clip path for Portugal */}
         <clipPath id="pt-half">
           <polygon points="60,0 60,40 0,40" />
         </clipPath>
@@ -50,16 +54,20 @@ function PtBrFlagIcon() {
         <circle cx="38" cy="24" r="6" fill="#ffcc00" />
       </g>
 
+      {/* Subtle diagonal divider stroke */}
       <line x1="60" y1="0" x2="0" y2="40" stroke="#0f172a" strokeWidth="1.5" />
     </svg>
   )
 }
 
 /**
- * Top floating pill allowing users to switch between English and Portuguese.
+ * Top floating segmented pill allowing users to toggle the active UI and API language
+ * between English (`en`) and Portuguese (`pt`).
  */
 export default function LanguageToggle() {
   const { i18n } = useTranslation()
+
+  // Normalize regional variants (e.g. 'pt-BR') to determine the active toggle state
   const currentLang = i18n.language?.startsWith('pt') ? 'pt' : 'en'
 
   return (
@@ -68,6 +76,7 @@ export default function LanguageToggle() {
       aria-label="Language switcher"
       className="fixed top-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/10 bg-slate-900/75 p-1 shadow-xl backdrop-blur-md"
     >
+      {/* English toggle button */}
       <button
         type="button"
         data-testid="lang-en"
@@ -84,6 +93,7 @@ export default function LanguageToggle() {
         <span>EN</span>
       </button>
 
+      {/* Portuguese toggle button */}
       <button
         type="button"
         data-testid="lang-pt"

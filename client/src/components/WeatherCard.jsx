@@ -2,6 +2,10 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Search, MapPin, Thermometer, Droplets, Loader2, RotateCcw, AlertCircle } from 'lucide-react'
 
+/**
+ * Maps raw English error strings returned by the Express backend or network layer
+ * into i18n translation keys so error messages dynamically adapt to EN/PT.
+ */
 const ERROR_TRANSLATION_MAP = {
   'You must provide a valid location!': 'errors.invalidLocation',
   'Unable to find location. Try another search!': 'errors.notFound',
@@ -12,30 +16,41 @@ const ERROR_TRANSLATION_MAP = {
 }
 
 /**
- * Floating glassmorphic card handling location search, weather metrics, and error states.
+ * Floating glassmorphic card handling location search input, weather metrics display,
+ * loading states, and localized error feedback.
  *
  * @param {Object} props
- * @param {Object|null} props.weather - Weather and geolocation payload.
- * @param {boolean} props.loading - Indicates whether a search request is in progress.
- * @param {string|null} props.error - Error message or key from API/network failure.
- * @param {(address: string) => void} props.onSearch - Callback triggered on form submit.
- * @param {() => void} props.onReset - Callback triggered when resetting the view.
+ * @param {Object|null} props.weather - Combined geolocation and weather forecast payload.
+ * @param {boolean} props.loading - Indicates whether an API request is currently in flight.
+ * @param {string|null} props.error - Raw error string or error code from failed requests.
+ * @param {(address: string) => void} props.onSearch - Callback triggered with trimmed query on submit.
+ * @param {() => void} props.onReset - Callback triggered when the user resets the search state.
  */
 export default function WeatherCard({ weather, loading, error, onSearch, onReset }) {
   const { t } = useTranslation()
+
+  // Controlled input state for the search text field
   const [query, setQuery] = useState('')
 
+  /**
+   * Handles form submission, preventing full-page browser reload and guarding
+   * against empty whitespace submissions or duplicate requests while loading.
+   */
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!query.trim() || loading) return
     onSearch(query.trim())
   }
 
+  /**
+   * Clears the local search input and notifies the parent `App` component to reset map/weather state.
+   */
   const handleClear = () => {
     setQuery('')
     onReset()
   }
 
+  // Resolve backend error messages into localized strings, falling back to the raw message if unmapped
   const translatedError = error
     ? ERROR_TRANSLATION_MAP[error]
       ? t(ERROR_TRANSLATION_MAP[error])
@@ -57,6 +72,7 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
           />
         </div>
 
+        {/* Primary submit button: displays an animated spinner while `loading` is true */}
         <button
           type="submit"
           disabled={loading || !query.trim()}
@@ -65,6 +81,7 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('searchButton')}
         </button>
 
+        {/* Conditional reset button: rendered only when an active result or error exists */}
         {(weather || error) && (
           <button
             type="button"
@@ -77,14 +94,14 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
         )}
       </form>
 
-      {/* Initial Helper State */}
+      {/* Initial Helper State: shown on first load before any search is performed */}
       {!weather && !error && !loading && (
         <p className="mt-3 text-center text-xs text-slate-400">
           {t('initialHelper')}
         </p>
       )}
 
-      {/* Error State */}
+      {/* Error State Banner */}
       {translatedError && (
         <div className="mt-5 flex items-start gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-rose-200">
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
@@ -95,9 +112,10 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
         </div>
       )}
 
-      {/* Weather Forecast Result */}
+      {/* Weather Forecast Result Panel */}
       {weather && !error && (
         <div className="mt-6 space-y-5 animate-[fadeIn_0.35s_ease-out]">
+          {/* Location header (Country + Formatted Place Name + OpenWeather condition icon) */}
           <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
             <div>
               <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-sky-400">
@@ -116,6 +134,7 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
             />
           </div>
 
+          {/* Primary temperature readout and condition badge */}
           <div className="flex items-baseline justify-between">
             <div className="text-5xl font-bold tracking-tight text-white">
               {Math.round(weather.forecastData.temperature)}
@@ -126,6 +145,7 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
             </span>
           </div>
 
+          {/* Secondary telemetry cards: Feels-Like temperature and Relative Humidity */}
           <div className="grid grid-cols-2 gap-3 pt-1">
             <div className="rounded-xl border border-white/5 bg-slate-950/50 p-3.5">
               <div className="flex items-center gap-1.5 text-xs text-slate-400">

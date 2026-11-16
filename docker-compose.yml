@@ -1,19 +1,30 @@
 services:
   weather-app:
+    # Build image locally using the root multi-stage Dockerfile
     build: .
     container_name: weather-app
+    # Automatically restart the container unless explicitly stopped by the administrator
     restart: unless-stopped
+
+    # Direct host port mapping is intentionally commented out because traffic is routed
+    # internally through the `global-proxy` reverse proxy network (e.g., Nginx Proxy Manager).
     # ports:
-    #   - "3000:3000" 
-    # uncomment the above lines if you want to expose the app to the host machine
+    #   - "3000:3000"
+
+    # Inject sensitive API keys (OPENCAGE_API_KEY, OPENWEATHER_API_KEY) at runtime
     env_file:
       - .env
+
+    # Explicit runtime environment variables
     environment:
       - NODE_ENV=production
       - PORT=3000
+
+    # Attach container to the shared external reverse-proxy Docker network
     networks:
       - global-proxy
 
 networks:
   global-proxy:
+    # Expects `global-proxy` to be pre-created on the host (`docker network create global-proxy`)
     external: true
