@@ -58,11 +58,10 @@ jobs:
           component: true
 
       - name: Run Cypress E2E Tests
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: client
-          install: false
-          start: npm start --prefix ..
-          wait-on: 'http://127.0.0.1:3000'
+        working-directory: ./client
         env:
           CYPRESS_baseUrl: 'http://127.0.0.1:3000'
+        run: |
+          npm start --prefix .. &
+          npx wait-on http://127.0.0.1:3000 --timeout 30000
+          npx cypress run --e2e
