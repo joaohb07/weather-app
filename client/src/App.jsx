@@ -23,7 +23,7 @@ export default function App() {
 
     try {
       const response = await fetch(
-        `/weather?address=${encodeURIComponent(address)}&lang=${lang}`
+        `weather?address=${encodeURIComponent(address)}&lang=${lang}`
       )
       const data = await response.json()
 
