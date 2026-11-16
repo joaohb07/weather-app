@@ -7,14 +7,27 @@ import worldData from 'world-atlas/countries-50m.json'
 const WIDTH = 1000
 const HEIGHT = 520
 
+/**
+ * Retorna a paleta de preenchimento e borda do país conforme a temperatura em °C.
+ *
+ * @param {number|null|undefined} temp - Temperatura atual em graus Celsius.
+ * @returns {{ fill: string, stroke: string }} Cores hexadecimais para o polígono SVG.
+ */
 function getThermalColor(temp) {
   if (temp === undefined || temp === null) return { fill: '#38bdf8', stroke: '#7dd3fc' }
-  if (temp <= 10) return { fill: '#0284c7', stroke: '#38bdf8' }   // Frio (Azul)
-  if (temp <= 22) return { fill: '#0d9488', stroke: '#2dd4bf' }   // Ameno (Teal/Esmeralda)
-  if (temp <= 30) return { fill: '#d97706', stroke: '#fbbf24' }   // Quente (Âmbar)
-  return { fill: '#e11d48', stroke: '#fb7185' }                   // Muito quente (Coral)
+  if (temp <= 10) return { fill: '#0284c7', stroke: '#38bdf8' }
+  if (temp <= 22) return { fill: '#0d9488', stroke: '#2dd4bf' }
+  if (temp <= 30) return { fill: '#d97706', stroke: '#fbbf24' }
+  return { fill: '#e11d48', stroke: '#fb7185' }
 }
 
+/**
+ * Mapa-múndi vetorial interativo que destaca o país pesquisado e aplica zoom na coordenada.
+ *
+ * @param {Object} props
+ * @param {Object|null} props.location - Dados geográficos retornados pela API `/weather`.
+ * @param {number|undefined} props.temperature - Temperatura atual para definir a cor térmica.
+ */
 export default function WorldMap({ location, temperature }) {
   const countries = useMemo(() => {
     return feature(worldData, worldData.objects.countries).features
@@ -28,11 +41,9 @@ export default function WorldMap({ location, temperature }) {
 
   const pathGenerator = useMemo(() => geoPath().projection(projection), [projection])
 
-  // Identifica o polígono do país por código ISO ou pelas próprias coordenadas [lng, lat]
   const highlightedFeature = useMemo(() => {
     if (!location) return null
 
-    // 1. Busca pelo código ISO Alpha-3 -> ID numérico (ex: "ESP" -> "724")
     if (location.countryCode) {
       const lookup = iso3166.whereAlpha3 || iso3166.default?.whereAlpha3
       const info = lookup ? lookup(location.countryCode.toUpperCase()) : null
@@ -45,7 +56,6 @@ export default function WorldMap({ location, temperature }) {
       }
     }
 
-    // 2. Fallback geométrico: encontra o país que contém o ponto [longitude, latitude]
     if (location.longitude != null && location.latitude != null) {
       const byCoords = countries.find((geo) =>
         geoContains(geo, [location.longitude, location.latitude])
@@ -56,7 +66,6 @@ export default function WorldMap({ location, temperature }) {
     return null
   }, [location, countries])
 
-  // Calcula posição do pin e transformação de zoom suave
   const { pinCoords, transformStyle } = useMemo(() => {
     if (!location?.longitude || !location?.latitude) {
       return {
@@ -72,7 +81,6 @@ export default function WorldMap({ location, temperature }) {
 
     const [x, y] = projected
     const scale = 2.4
-    // Desloca o foco levemente para a direita no desktop para não ficar atrás do card à esquerda
     const offsetX = WIDTH * 0.62 - x * scale
     const offsetY = HEIGHT * 0.5 - y * scale
 
@@ -86,7 +94,6 @@ export default function WorldMap({ location, temperature }) {
 
   return (
     <div className="fixed inset-0 z-0 select-none bg-[radial-gradient(ellipse_at_center,_#0f172a_0%,_#060911_100%)]">
-      {/* Grade sutil de fundo */}
       <div
         className="absolute inset-0 opacity-20"
         style={{
@@ -120,6 +127,7 @@ export default function WorldMap({ location, temperature }) {
               <path
                 key={geo.id || geo.properties?.name || index}
                 d={pathGenerator(geo)}
+                data-highlighted={isHighlighted ? 'true' : 'false'}
                 fill={isHighlighted ? activeColors.fill : '#162033'}
                 stroke={isHighlighted ? activeColors.stroke : '#26354d'}
                 strokeWidth={isHighlighted ? 0.9 : 0.45}
@@ -129,24 +137,11 @@ export default function WorldMap({ location, temperature }) {
             )
           })}
 
-          {/* Pin pulsante na coordenada exata */}
           {pinCoords && (
-            <g transform={`translate(${pinCoords.x}, ${pinCoords.y})`}>
+            <g data-testid="map-pin" transform={`translate(${pinCoords.x}, ${pinCoords.y})`}>
               <circle r="6" fill={activeColors.stroke} opacity="0.35">
-                <animate
-                  attributeName="r"
-                  from="2"
-                  to="10"
-                  dur="1.8s"
-                  repeatCount="indefinite"
-                />
-                <animate
-                  attributeName="opacity"
-                  from="0.7"
-                  to="0"
-                  dur="1.8s"
-                  repeatCount="indefinite"
-                />
+                <animate attributeName="r" from="2" to="10" dur="1.8s" repeatCount="indefinite" />
+                <animate attributeName="opacity" from="0.7" to="0" dur="1.8s" repeatCount="indefinite" />
               </circle>
               <circle r="2.2" fill="#ffffff" stroke={activeColors.fill} strokeWidth="1" />
             </g>

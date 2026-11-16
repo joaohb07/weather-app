@@ -6,5 +6,12 @@ export default defineConfig({
     supportFile: false,
     viewportWidth: 1280,
     viewportHeight: 800
+  },
+  component: {
+    supportFile: false,
+    devServer: {
+      framework: 'react',
+      bundler: 'vite'
+    }
   }
 })
