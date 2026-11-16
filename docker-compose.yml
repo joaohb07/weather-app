@@ -1,0 +1,19 @@
+services:
+  weather-app:
+    build: .
+    container_name: weather-app
+    restart: unless-stopped
+    # ports:
+    #   - "3000:3000" 
+    # uncomment the above lines if you want to expose the app to the host machine
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    networks:
+      - global-proxy
+
+networks:
+  global-proxy:
+    external: true

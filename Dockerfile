@@ -1,21 +1,29 @@
-# Etapa 1: Build do Frontend React
-FROM node:20-alpine AS client-builder
+# Stage 1: Build Frontend (React + Vite)
+FROM node:20-alpine AS frontend-builder
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm ci
 COPY client/ ./
 RUN npm run build
 
-# Etapa 2: Servidor Express em Produção
-FROM node:20-alpine
+# Stage 2: Install Backend production dependencies
+FROM node:20-alpine AS backend-builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
-COPY src/ ./src/
-COPY --from=client-builder /app/client/dist ./client/dist
 
+# Stage 3: Production runtime
+FROM node:20-alpine
+WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
+
+COPY --from=backend-builder /app/node_modules ./node_modules
+COPY package*.json ./
+COPY src ./src
+COPY --from=frontend-builder /app/client/dist ./client/dist
+
+USER node
 EXPOSE 3000
 
 CMD ["npm", "start"]
