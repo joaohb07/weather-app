@@ -48,7 +48,8 @@ describe('GET /weather endpoint', () => {
             temperature: 16.4,
             feels_like: 15.5,
             humidity: 66,
-            icon: '02d'
+            icon: '02d',
+            timezone: 3600
         }
 
         geocode.mockResolvedValue(mockLocation)

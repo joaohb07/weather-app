@@ -36,6 +36,9 @@ describe('Weather App - E2E Flow', () => {
   })
 
   it('searches a city, displays weather metrics, and highlights the country on the map', () => {
+    // Freeze clock at 14:00:00 UTC so Barcelona (UTC+1) deterministically renders 15:00:00
+    cy.clock(Date.UTC(2026, 10, 17, 14, 0, 0), ['Date'])
+
     // Stub the GET `/weather` API endpoint with a realistic Barcelona payload
     cy.intercept(
       { method: 'GET', pathname: '/weather' },
@@ -52,7 +55,8 @@ describe('Weather App - E2E Flow', () => {
             temperature: 16.4,
             feels_like: 15.5,
             humidity: 66,
-            icon: '02d'
+            icon: '02d',
+            timezone: 3600
           }
         }
       }
@@ -65,9 +69,12 @@ describe('Weather App - E2E Flow', () => {
     // Wait for the intercepted network request to complete before asserting DOM updates
     cy.wait('@getWeather')
 
-    // Assert formatted location, rounded temperature (16.4 -> 16°C), description, feels-like, and humidity
+    // Assert formatted location, local time pill, rounded temperature, description, feels-like, and humidity
     cy.contains('Spain').should('be.visible')
     cy.contains('Barcelona, Catalonia, Spain').should('be.visible')
+    cy.contains('Local time:').should('be.visible')
+    cy.contains('15:00:00').should('be.visible')
+    cy.contains('UTC+1').should('be.visible')
     cy.contains('16°C').should('be.visible')
     cy.contains('few clouds').should('be.visible')
     cy.contains('15.5°C').should('be.visible')
@@ -121,7 +128,8 @@ describe('Weather App - E2E Flow', () => {
             temperature: 24.0,
             feels_like: 23.8,
             humidity: 50,
-            icon: '01d'
+            icon: '01d',
+            timezone: 32400
           }
         }
       }
