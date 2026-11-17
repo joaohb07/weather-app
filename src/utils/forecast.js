@@ -42,7 +42,8 @@ const forecast = async (latitude, longitude, lang = 'en') => {
         temperature: data.main.temp,
         feels_like: data.main.feels_like,
         humidity: data.main.humidity,
-        icon: data.weather[0].icon
+        icon: data.weather[0].icon,
+        timezone: data.timezone
     }
 }
 

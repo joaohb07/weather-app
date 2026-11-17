@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, MapPin, Thermometer, Droplets, Loader2, RotateCcw, AlertCircle } from 'lucide-react'
+import { Search, MapPin, Thermometer, Droplets, Loader2, RotateCcw, AlertCircle, Clock } from 'lucide-react'
 
 /**
  * Maps raw English error strings returned by the Express backend or network layer
@@ -35,6 +35,7 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
   /**
    * Handles form submission, preventing full-page browser reload and guarding
    * against empty whitespace submissions or duplicate requests while loading.
+   * @param {React.FormEvent<HTMLFormElement>} e - Form submission event.
    */
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -56,6 +57,47 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
       ? t(ERROR_TRANSLATION_MAP[error])
       : error
     : null
+  
+  const [now, setNow] = useState(() => Date.now()) // Initialize `now` with the current timestamp to track local time updates
+
+  // Update the `now` timestamp every second to keep the local time display accurate
+  useEffect(() => {
+    if (weather?.forecastData?.timezone === undefined) return // Do not start the timer if timezone data is unavailable
+    const timer = setInterval(() => setNow(Date.now()), 1000) // Update every second
+    return () => clearInterval(timer) // Clean up the interval on component unmount or when timezone changes
+  }, [weather?.forecastData?.timezone]) // Re-run effect only when the timezone offset changes, ensuring accurate local time display
+
+  /**
+   * Format the current local time of the city based on the UTC offset
+   * of the OpenWeather API response.
+   * @param {number} offsetSeconds - The UTC offset in seconds from the OpenWeather API.
+   * @returns {{ timeStr: string, utcOffset: string } | null} - Formatted local time and UTC offset, or null if offset is invalid.
+   */
+  const formatLocalTime = (offsetSeconds) => {
+    if (typeof offsetSeconds !== 'number') return null
+
+    // Calculate the local time by adding the UTC offset (in seconds) to the current timestamp
+    const cityDate = new Date(now + offsetSeconds * 1000)
+    const timeStr = cityDate.toLocaleTimeString('en-GB', {
+      timeZone: 'UTC',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    })
+
+    // Format the UTC offset into a human-readable string (e.g., "UTC+2", "UTC-5:30")
+    const sign = offsetSeconds >= 0 ? '+' : '-'
+    const absSeconds = Math.abs(offsetSeconds)
+    const hours = Math.floor(absSeconds / 3600)
+    const minutes = Math.floor((absSeconds % 3600) / 60)
+    const utcOffset = minutes > 0
+      ? `UTC${sign}${hours}:${String(minutes).padStart(2, '0')}`
+      : `UTC${sign}${hours}`
+
+    return { timeStr, utcOffset } // Return both the formatted time string and the UTC offset for display
+  }
+
+  const localTime = formatLocalTime(weather?.forecastData?.timezone) // Compute the local time display based on the current weather's timezone offset, or null if unavailable
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-2xl backdrop-blur-xl transition-all duration-500">
@@ -125,6 +167,15 @@ export default function WeatherCard({ weather, loading, error, onSearch, onReset
               <h2 className="mt-1 text-lg font-semibold leading-snug text-white">
                 {weather.placeName}
               </h2>
+              {localTime && (
+                <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-medium text-slate-300">
+                  <Clock className="h-3 w-3 text-sky-400" />
+                  <span>{t('localTime', { defaultValue: 'Local time' })}:</span>
+                  <span className="font-mono text-slate-100">{localTime.timeStr}</span>
+                  <span className="text-slate-500">•</span>
+                  <span className="text-sky-400">{localTime.utcOffset}</span>
+                </div>
+              )}
             </div>
 
             <img

@@ -16,6 +16,7 @@ export const resources = {
 
       // Weather Card Labels
       defaultLocationLabel: 'Location',
+      localTime: 'Local time',
       feelsLike: 'Feels Like',
       humidity: 'Humidity',
       errorHint: 'Try searching by city or country name in English or Portuguese.',
@@ -50,6 +51,7 @@ export const resources = {
 
       // Weather Card Labels
       defaultLocationLabel: 'Localização',
+      localTime: 'Horário local',
       feelsLike: 'Sensação Térmica',
       humidity: 'Umidade',
       errorHint: 'Tente buscar pelo nome da cidade ou país em inglês ou português.',
