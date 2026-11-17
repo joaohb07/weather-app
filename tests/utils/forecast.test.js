@@ -33,7 +33,8 @@ describe('forecast utility', () => {
                 temp: 17.2,
                 feels_like: 16.9,
                 humidity: 82
-            }
+            },
+            timezone: 3600
         }
 
         // Spy on native `fetch` and resolve with a simulated HTTP 200 payload
@@ -50,13 +51,14 @@ describe('forecast utility', () => {
             { signal: expect.any(AbortSignal) }
         )
 
-        // Verify output matches the normalized `ForecastResult` schema
+        // Verify output matches the normalized `ForecastResult` schema including `timezone`
         expect(result).toEqual({
             weather_description: 'broken clouds',
             temperature: 17.2,
             feels_like: 16.9,
             humidity: 82,
-            icon: '04d'
+            icon: '04d',
+            timezone: 3600
         })
     })
 
