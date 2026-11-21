@@ -1,10 +1,7 @@
 name: CD - Deploy to Home Server
 
 on:
-  workflow_run:
-    workflows: ["CI - Tests & Build"]
-    types:
-      - completed
+  push:
     branches: [main]
 
 jobs:
