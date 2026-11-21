@@ -8,7 +8,6 @@ jobs:
   deploy:
     name: Update Code & Rebuild Docker Container
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Connect to Tailscale Network
