@@ -32,7 +32,7 @@ describe('<InfoModal />', () => {
     cy.contains('a', 'Documentation').should(
       'have.attr',
       'href',
-      'https://joaohb07.github.io/documentation/'
+      'https://joaohb07.github.io/documentation/apps/weather_app/'
     )
   })
 
