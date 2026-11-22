@@ -1,7 +1,8 @@
-services:
+services:    
   weather-app:
     # Build image locally using the root multi-stage Dockerfile
     build: .
+    image: weather-app:latest
     container_name: weather-app
     # Automatically restart the container unless explicitly stopped by the administrator
     restart: unless-stopped
